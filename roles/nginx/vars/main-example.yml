@@ -1,0 +1,43 @@
+---
+# vars file for configure
+install_nginx: true
+
+template_path: roles/configure/templates
+nginx_home: /etc/nginx
+
+nginx_conf_path: "{{ nginx_home }}/conf.d"
+nginx_app_path: "{{ nginx_home }}/apps"
+
+cert_path: /etc/nginx/ssl
+ssl_cert: fullchain.pem
+ssl_key: privkey.pem
+ssl2_cert: fullchain.crt
+ssl2_key: privkey.key
+ssl3_cert: fullchain.pem
+ssl3_key: privkey.pem
+
+domain: domain.example.org
+domain2: domain2.example.com
+domain3: domain3.example.biz
+
+
+
+landing_host: 192.168.1.1
+landing_port: 3033
+mobile_path: /var/www/mobile
+well_known_dir: /var/www/uploads/.well-known
+app_props:
+  - name: app1
+    uploads_path: "/var/www/server/web/uploads"
+    app_path: "{{ nginx_app_path }}/ag.conf"
+    api_host: 192.168.1.101
+    api_port: 8000
+    web_host: 192.168.1.101
+    web_port: 3030
+  - name: app2
+    uploads_path: "/var/www/regions/ah/server/web/uploads"
+    app_path: "{{ nginx_app_path }}/ah.conf"
+    api_host: 192.168.1.101
+    api_port: 8010
+    web_host: 192.168.1.101
+    web_port: 3010

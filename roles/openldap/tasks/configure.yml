@@ -1,0 +1,50 @@
+
+- name: Upload certs to server
+  copy:
+    src: "{{ item }}"
+    dest: "{{ cert_path }}"
+  with_fileglob:
+    - "roles/openldap/files/certs/*"
+
+- name: Ensure directory exist
+  file:
+    path: "{{ tmp_dir }}"
+    state: directory
+    mode: 755
+
+- name: Upload slapd config 
+  template:
+    src: config.ldif.j2
+    dest: "{{ tmp_dir }}/config.ldif"
+  
+- name: Upload entries 
+  template: 
+    src: entries.ldif.j2
+    dest: "{{ tmp_dir }}/{{ domain }}.ldif"
+
+- name: Apply config.ldif
+  command: " slapadd -F /etc/ldap/slapd.d -b cn=config -l {{ tmp_dir }}/config.ldif "
+  ignore_errors: true
+
+- name: Apply entries
+  command: " slapadd -F /etc/ldap/slapd.d -b {{ ldap_basedc }} -l {{ tmp_dir }}/{{ domain }}.ldif "
+  ignore_errors: true
+
+- name: Upload ldap.conf
+  template:
+    src: ldap.conf.j2
+    dest: /etc/ldap/ldap.conf
+
+- name: Update SLAPD_SERVICES to include ldap://, ldapi://, ldaps://
+  lineinfile:
+    path: /etc/default/slapd  # or the path to your configuration file
+    regexp: '^SLAPD_SERVICES='
+    line: 'SLAPD_SERVICES="ldap:/// ldapi:/// ldaps:///"'
+    state: present
+
+- name: Remove tmpdir 
+  file:
+    path: "{{ tmp_dir }}"
+    state: absent
+  notify: 
+    - "restart_slapd"

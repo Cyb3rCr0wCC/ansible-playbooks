@@ -1,0 +1,57 @@
+org: Company
+# domain3: aai-test
+domain2: company
+domain1: org
+# domain: "{{ domain3 }}.{{ domain2 }}.{{ domain1 }}"
+domain: "{{ domain2 }}.{{ domain1 }}"
+
+fqdn: "ldap.{{ domain }}"
+
+
+tmp_dir: "tmp/openldap"
+# where certificates will be stored
+#cert_path: "/etc/ssl/certs/{{ domain }}"
+cert_path: "/etc/ldap/ssl"
+# where certificates are
+local_cert_path: "certs"
+ldap_ca_cert: ca.crt
+ldap_server_cert: slapd.crt
+ldap_server_key: slapd.key
+
+ldap_backend: "mdb"
+# ldap_basedc: "dc={{ domain3 }},dc={{ domain2 }},dc={{ domain1 }}"
+ldap_basedc: "dc={{ domain2 }},dc={{ domain1 }}"
+ldap_basedn: "ou=people,{{ ldap_basedc }}"
+ldap_pw: '12345.'
+ldap_default_passwd_enc: "{SSHA512}"
+
+user_ou: 'Users'
+group_ou: 'Groups'
+group1: 'admin'
+group2: 'developer'
+sample_user: 'sampleuser'
+
+
+country: "TM"
+state: "Ashgabat"
+locality: "Ashgabat"
+organization: "Company"
+organizational_unit: "Company"
+common_name: "company.org"
+email: "admin@company.com"
+days_valid: 3650 
+
+
+ldap_server: "ldap://192.168.1.1" # Need to be changed
+ldaps_server: "ldaps://192.168.1.1" # Need to be changed
+ldap_user: "cn=admin,{{ ldap_basedc }}"
+ldap_password: "1234"
+ldap_required_packages:
+  - ldap-utils
+  - libnss-ldap
+  - libpam-ldap 
+  - nscd
+
+usernames:
+  - name: user1
+    pub: user1.pub

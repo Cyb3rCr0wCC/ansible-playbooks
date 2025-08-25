@@ -1,0 +1,7 @@
+---
+# handlers file for server
+- name: restart_supervisord
+  ansible.builtin.systemd:
+    name: supervisor
+    state: restarted
+    enabled: yes

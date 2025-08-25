@@ -1,0 +1,31 @@
+---
+- name: Service Management  # This starts the first (and only) play in this playbook
+  hosts: ubuntu      # Indented 2 spaces from "name"
+  become: yes             # Indented 2 spaces from "name"
+  tasks:                  # Indented 2 spaces from "name"
+    - name: Include server role  # Indented 4 spaces from "name" (of the play)
+      ansible.builtin.include_role:
+        name: server
+      tags:
+        - prepare_ubuntu
+        - supervisord_conf
+    - name: Include nginx role
+      ansible.builtin.include_role:
+        name: nginx
+      tags:
+        - install
+        - single
+        - double
+    - name: Include promtail role
+      ansible.builtin.include_role:
+        name: promtail 
+      tags:
+        - promtail
+        - configure
+    - name:
+      include_role:
+        name: network
+      tags:
+        - "netplan_conf"
+
+      # Other roles

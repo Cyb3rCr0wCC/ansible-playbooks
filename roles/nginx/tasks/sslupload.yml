@@ -1,0 +1,20 @@
+---
+- name: Ensure ssl dir exists
+  file:
+    path: "{{ cert_path }}"
+    state: directory
+
+- name: Ensure Domain ssl dir exists
+  file:
+    path: "{{ cert_path }}/{{item}}"
+    state: directory
+  with_items: 
+    - example.com
+
+- name: Upload  ssl certs 
+  copy:
+    src: "files/{{ item }}"
+    dest: "{{ cert_path }}/" 
+  with_items: 
+    - example.com
+  notify: restart_nginx

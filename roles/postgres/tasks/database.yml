@@ -1,0 +1,24 @@
+---
+- name: Create database
+  postgresql_db:
+    name: "{{ db_name }}"
+    state: present
+    owner: "{{ db_owner }}"
+    encoding: UTF8
+    login_user: "{{ postgres_user }}"
+    login_password: "{{ postgres_password }}"
+    port: "{{ port }}"
+    login_host: localhost
+  tags: create_db
+
+- name: Delete Database
+  postgresql_db:
+    name: "{{ db_name }}"
+    state: absent
+    owner: "{{ db_owner }}"
+    encoding: UTF8
+    login_user: "{{ postgres_user }}"
+    login_password: "{{ postgres_password }}"
+    port: "{{ port }}"
+    login_host: localhost
+  tags: delete_db

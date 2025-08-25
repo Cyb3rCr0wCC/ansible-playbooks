@@ -1,0 +1,81 @@
+dn: {{ ldap_basedc }}
+objectClass: top
+objectClass: dcObject
+objectClass: organization
+o: mekdep
+dc: mekdep
+structuralObjectClass: organization
+entryUUID: e6735dd0-8d92-103e-854f-d7b5fe9621be
+creatorsName: cn=admin,{{ ldap_basedc }}
+createTimestamp: 20240413033730Z
+entryCSN: 20240413033730.212192Z#000000#000#000000
+modifiersName: cn=admin,{{ ldap_basedc }}
+modifyTimestamp: 20240413033730Z
+
+dn: ou={{ user_ou }},{{ ldap_basedc }}
+objectClass: organizationalUnit
+ou: {{ user_ou }}
+structuralObjectClass: organizationalUnit
+entryUUID: 268c0140-8da4-103e-9069-098f4d7a28b9
+creatorsName: cn=admin,{{ ldap_basedc }}
+createTimestamp: 20240413054059Z
+entryCSN: 20240413054059.192279Z#000000#000#000000
+modifiersName: cn=admin,{{ ldap_basedc }}
+modifyTimestamp: 20240413054059Z
+
+dn: ou={{ group_ou }},{{ ldap_basedc }}
+objectClass: organizationalUnit
+ou: {{ group_ou }}
+structuralObjectClass: organizationalUnit
+entryUUID: 269a380a-8da4-103e-906a-098f4d7a28b9
+creatorsName: cn=admin,{{ ldap_basedc }}
+createTimestamp: 20240413054059Z
+entryCSN: 20240413054059.285467Z#000000#000#000000
+modifiersName: cn=admin,{{ ldap_basedc }}
+modifyTimestamp: 20240413054059Z
+
+dn: cn={{ group1 }},ou={{ group_ou }},{{ ldap_basedc }}
+objectClass: posixGroup
+gidNumber: 10000
+cn: {{ group1 }}
+structuralObjectClass: posixGroup
+entryUUID: c7cc4830-8da4-103e-906b-098f4d7a28b9
+creatorsName: cn=admin,{{ ldap_basedc }}
+createTimestamp: 20240413054529Z
+entryCSN: 20240413054529.726732Z#000000#000#000000
+modifiersName: cn=admin,{{ ldap_basedc }}
+modifyTimestamp: 20240413054529Z
+
+dn: cn={{ group2 }},ou={{ group_ou }},{{ ldap_basedc }}
+objectClass: posixGroup
+gidNumber: 10001
+structuralObjectClass: posixGroup
+entryUUID: ce6f1c44-8da4-103e-906c-098f4d7a28b9
+creatorsName: cn=admin,{{ ldap_basedc }}
+createTimestamp: 20240413054540Z
+cn: {{ group2 }}
+entryCSN: 20240413054601.215899Z#000000#000#000000
+modifiersName: cn=admin,{{ ldap_basedc }}
+modifyTimestamp: 20240413054601Z
+
+dn: cn={{ sample_user }},ou={{ user_ou }},{{ ldap_basedc }}
+objectClass: posixAccount
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+loginShell: /bin/bash
+homeDirectory: /home/{{ sample_user }}
+uid: {{ sample_user }}
+cn: {{ sample_user }}
+uidNumber: 10001
+gidNumber: 10000
+sn: {{ sample_user }}
+structuralObjectClass: inetOrgPerson
+entryUUID: 6deabefe-8da5-103e-906d-098f4d7a28b9
+creatorsName: cn=admin,{{ ldap_basedc }}
+createTimestamp: 20240413055008Z
+mail: example@gmail.com
+userPassword:: e1NTSEF9S3ZaSTcwN29aalcyMURCVzlvaUJEY3ZlemdSamRFWjY=
+entryCSN: 20240528140924.631258Z#000000#000#000000
+modifiersName: cn=admin,{{ ldap_basedc }}
+modifyTimestamp: 20240528140924Z

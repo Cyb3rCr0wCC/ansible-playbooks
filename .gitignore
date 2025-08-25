@@ -1,0 +1,8 @@
+*.pem
+*.priv
+*.pub
+*.cred
+production.yml
+*.cfg
+**/vars/main.yml
+inventories/*

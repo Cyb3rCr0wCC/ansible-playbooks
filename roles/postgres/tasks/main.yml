@@ -1,0 +1,12 @@
+---
+# tasks file for postgres
+- include_tasks: install.yml
+  tags: postgres_install
+
+- include_tasks: configure.yml
+  tags: postgres_configure
+
+- include_tasks: database.yml
+  tags: 
+    - create_db
+    - delete_db

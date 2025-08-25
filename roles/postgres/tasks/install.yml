@@ -1,0 +1,45 @@
+---
+- block:
+  - name: Install prerequisites
+    apt:
+      name:
+        - apt-transport-https
+        - ca-certificates
+        - curl
+        - gpg
+        - wget
+        - gnupg
+      state: present
+    when: ansible_os_family == "Debian"
+
+  - name: Add PostgreSQL GPG key
+    ansible.builtin.get_url:
+      url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+      dest: /usr/share/keyrings/postgresql.gpg
+      mode: '0644'
+
+  - name: Add postgres repository
+    apt_repository:
+      repo: "{{ postgres_repo }}"
+      state: present
+      filename: "pgdg"
+
+
+  
+  - name: Update cache
+    apt:
+      update_cache: yes
+
+  - name: Install Postgresql
+    apt:
+      name: 
+        - "postgresql-{{ postgres_version }}"
+        - "postgresql-contrib-{{ postgres_version }}"
+      state: present
+
+  - name: Set postgres user password
+    command: >
+      sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD '{{ postgres_password }}';"
+    args:
+          executable: /bin/bash
+  tags: postgres_install

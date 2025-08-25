@@ -1,0 +1,6 @@
+---
+- name: Import Netplan tasks
+  import_tasks: netplan.yml
+  tags:
+    - "netplan_conf"
+  

@@ -1,0 +1,14 @@
+---
+# handlers file for configure
+- name: restart_nginx
+  service: 
+    name: nginx
+    state: restarted
+
+- name: start_nginx
+  service:
+    name: nginx
+    state: started
+
+- name: set_owner
+  shell: chown -R nginx /etc/nginx/ && chmod -R 644 /etc/nginx/

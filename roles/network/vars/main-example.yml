@@ -1,0 +1,3 @@
+---
+# vars file for network
+netplan_conf_path: /etc/netplan

@@ -1,0 +1,18 @@
+---
+- import_tasks: install.yml
+  tags: install
+
+- import_tasks: sslupload.yml
+  tags:
+    - sslupload
+
+- name: Import task for sites 
+  ansible.builtin.include_tasks: vhosts.yml
+  tags:
+    - single
+    - double
+
+- name: Import task for nginx.conf
+  import_tasks: configure.yml
+  tags:
+    - configure

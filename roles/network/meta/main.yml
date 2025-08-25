@@ -1,0 +1,8 @@
+galaxy_info:
+  author: Cyb3rCr0wCC
+  description: DevOps Engineer, Malware Developer
+  company: Not so important
+
+  license: license (GPL-2.0-or-later, MIT, etc)
+
+  min_ansible_version: 2.1

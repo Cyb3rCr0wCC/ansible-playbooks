@@ -1,0 +1,19 @@
+---
+- name: Install supervisor package
+  apt:
+    name: supervisor
+    state: present
+    update_cache: yes
+
+- name: Replace supervisord.conf with custom version
+  copy:
+    src: supervisord.conf
+    dest: /etc/supervisor/supervisord.conf
+    owner: root
+    group: root
+    mode: '0644'
+    backup: yes
+  tags:
+    - "supervisord_conf"
+  notify:
+    - "restart_supervisord"

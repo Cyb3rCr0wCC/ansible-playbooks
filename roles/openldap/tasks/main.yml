@@ -1,0 +1,14 @@
+---
+# tasks file for openldap
+- name: Import Install task
+  import_tasks: install.yml
+  tags: "ldap_install"
+
+
+- name: Import configure tasks 
+  import_tasks: configure.yml
+  tags: "ldap_configure"
+
+- name: Import ldap client config
+  import_tasks: clientconfig.yml
+  tags: "ldap_client"

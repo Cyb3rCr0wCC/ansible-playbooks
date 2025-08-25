@@ -1,0 +1,27 @@
+# tasks file for ssh
+---
+- name: Backup sshd_config
+  copy:
+    src: /etc/ssh/sshd_config
+    dest: /etc/ssh/sshd_config.bak
+    remote_src: yes
+    backup: yes
+
+- name: Template sshd_config
+  template:
+    src: sshd.conf
+    dest: /etc/ssh/sshd_config
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Disable ssh.socket
+  command: systemctl disable --now ssh.socket
+
+- name: Restart SSH service
+  service:
+    name: ssh
+    state: restarted
+
+- name: Enable ssh.socket
+  command: systemctl enable --now ssh.service

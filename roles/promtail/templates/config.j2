@@ -1,0 +1,64 @@
+server:
+  http_listen_port: {{promtail_listen_port}}
+  grpc_listen_port: 0
+
+positions:
+  filename: {{promtail_config_positions.filename}}
+
+clients:
+  - url: {{promtail_loki_server_url}}/loki/api/v1/push
+
+scrape_configs:
+  # Default Syslog job for all servers
+  - job_name: syslog
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: syslog
+          host: "{{ ansible_hostname }}"
+          __path__: /var/log/syslog
+
+{% if 'dbservers' in group_names %}
+  - job_name: postgres
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: postgres
+          host: "{{ ansible_hostname }}"
+          __path__: /var/log/postgresql/*.log
+{% endif %}
+{% if 'weberservers' in group_names %}
+  # Job for Nginx logs on nginx_servers
+  - job_name: nginx
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: nginx
+          host: "{{ ansible_hostname }}"
+          __path__: /var/log/nginx/*.log
+    relabel_configs:
+      - source_labels: ['__path__']
+        target_label: 'filename'
+        regex: '.*/([^/]+)\.log'
+        replacement: '$1'
+{% endif %}
+{% if 'appservers' in group_names %}
+  # New job for custom application logs on appservers
+  - job_name: api_log
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: api_log
+          host: "{{ ansible_hostname }}"
+          __path__: /var/www/*/server/*.log
+    relabel_configs:
+      # This relabel config extracts the filename from the log path
+      - source_labels: ['__path__']
+        target_label: 'filename'
+        regex: '.*/server/([^/]+)\.log'
+        replacement: '$1'
+{% endif %}

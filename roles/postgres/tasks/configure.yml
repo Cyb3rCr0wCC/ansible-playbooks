@@ -1,0 +1,22 @@
+---
+- name: Change postgres.conf 
+  template:
+    src: templates/postgresql.conf
+    dest: "/etc/postgresql/{{ postgres_version }}/main/postgresql.conf"
+    mode: '644'
+  tags: 
+    - postgres_configure
+    - postgres_cnf
+  notify:
+          - "restart_postgres"
+
+- name: Add pg_hba.conf
+  template:
+    src: templates/pg_hba.conf
+    dest: "/etc/postgresql/{{ postgres_version }}/main/pg_hba.conf"
+    mode: '600'
+  tags: 
+    - postgres_configure
+    - pg_hba
+  notify:
+          - "restart_postgres"

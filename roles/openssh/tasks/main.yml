@@ -1,0 +1,8 @@
+---
+- name: sshd configuration
+  import_tasks: sshd.yml
+  tags: "sshd"
+
+- name: ssh public key upload
+  import_tasks: ssh_pubkey.yml
+  tags: "ssh_pubkey"

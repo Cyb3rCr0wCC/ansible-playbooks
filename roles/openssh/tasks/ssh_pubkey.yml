@@ -1,0 +1,15 @@
+---
+- name: Create the .ssh directory for each user
+  ansible.builtin.file:
+    path: "/home/{{ item.username }}/.ssh"
+    state: directory
+    owner: "{{ item.username }}"
+    mode: '0700'
+  loop: "{{ users_with_keys }}"
+
+- name: Copy the SSH public keys for each user
+  ansible.builtin.authorized_key:
+    user: "{{ item.username }}"
+    state: present
+    key: "{{ lookup('file', item.public_key_path) }}"
+  loop: "{{ users_with_keys }}"

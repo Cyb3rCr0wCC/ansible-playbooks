@@ -1,0 +1,89 @@
+---
+- name: Backup current config
+  community.general.archive:
+    path: "{{ nginx_home }}/conf.d"
+    dest: "{{ nginx_home }}/backup/conf.tgz"
+  tags:
+    - single
+    - double
+- name: Backup current app config
+  community.general.archive:
+    path: "{{ nginx_home }}/apps"
+    dest: "{{ nginx_home }}/backup/app.tgz"
+  tags:
+    - single
+    - double
+
+- name: Initialize sites_with_paths as an empty list
+  set_fact:
+    sites_with_paths: []
+  tags:
+    - single
+    - double
+    
+- name: Populate sites_with_paths dynamically
+  set_fact:
+    sites_with_paths: "{{ sites_with_paths + [computed_site] }}"
+  vars:
+    computed_site:
+      name: "{{ item.name }}"
+      domain: "{{ item.name }}.{{ domain }}"
+      domain2: "{{ item.name }}.{{ domain2 }}"
+      domain4: "{{ item.name }}.{{ domain4 }}"
+      site_path: "{{ nginx_conf_path }}/{{ item.name }}"
+      app_path: "{{ nginx_app_path }}/{{ item.name }}.conf"
+  with_items: "{{ app_props }}"
+  tags:
+    - single
+
+- name: Populate sites_with_paths dynamically
+  set_fact:
+    sites_with_paths: "{{ sites_with_paths + [computed_site] }}"
+  vars:
+    computed_site:
+      name: "{{ item.name }}"
+      domain: "{{ item.name }}.{{ domain }}"
+      domain2: "{{ item.name }}.{{ domain2 }}"
+      domain3: "{{ item.name }}.{{ domain3 }}"
+      domain4: "{{ item.name }}.{{ domain4 }}"
+      site_path: "{{ nginx_conf_path }}/{{ item.name }}"
+      app_path: "{{ nginx_app_path }}/{{ item.name }}.conf"
+  with_items: "{{ app_props }}"
+  tags:
+    - double
+
+
+- block:
+  - name: Ensure app dir exist
+    file:
+      path: "{{ nginx_app_path }}"
+      state: directory
+      owner: nginx
+      group: www-data
+      mode: 744
+
+  - name: Add app.conf 
+    template:
+      src: "{{ template_path }}/locations.conf"
+      dest: "{{ item.app_path }}"
+    with_items: "{{ app_props }}" 
+  tags:
+    - single
+    - double
+
+
+- name: Add  domain config to nginx
+  template:
+    src: "{{ template_path }}/server.conf"
+    dest: "{{ item.site_path }}.conf"
+    owner: nginx
+    group: www-data
+    mode: 744
+  with_items: "{{ sites_with_paths }}"
+  tags: 
+    - single
+    - double
+  notify:
+    - "set_owner"
+    - "restart_nginx"
+

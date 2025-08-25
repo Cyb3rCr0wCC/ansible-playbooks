@@ -1,0 +1,25 @@
+---
+- name: Get node_exporter release
+  ansible.builtin.get_url:
+    url: "https://github.com/prometheus/node_exporter/releases/download/v{{ node_exporter_version }}/node_exporter-{{ node_exporter_version }}.linux-{{ go_arch }}.tar.gz"
+    dest: "/tmp/node_exporter-{{ node_exporter_version }}.linux-{{ go_arch }}.tar.gz"
+
+- name: Create node_exporter user
+  ansible.builtin.user:
+    name: node_exporter
+    shell: /bin/sh
+
+- name: Extract node_exporter binary
+  ansible.builtin.unarchive:
+    src: "/tmp/node_exporter-{{ node_exporter_version }}.linux-{{ go_arch }}.tar.gz"
+    dest: /opt/
+    owner: node_exporter
+    remote_src: yes
+
+- name: Create Node_exporter systemd
+  template: 
+    src: node_exporter.service.j2
+    dest: "/etc/systemd/system/node_exporter.service"
+  notify: 
+    - daemon-reload
+    - node_exporter_start

@@ -1,0 +1,78 @@
+---
+- name: Install required packages
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+  apt:
+    name: "{{ ldap_required_packages }}"
+    state: present
+    update_cache: yes
+
+- name: Pre-seed LDAP configuration
+  debconf:
+    name: libnss-ldap
+    question: "{{ item.question }}"
+    value: "{{ item.value }}"
+    vtype: "{{ item.type }}"
+  with_items:
+    - { question: "libnss-ldap/ldap-server", value: "{{ ldap_server }}", type: "string" }
+    - { question: "libnss-ldap/ldap-base", value: "{{ ldap_basedc }}", type: "string" }
+    - { question: "libnss-ldap/binddn", value: "{{ ldap_user }}", type: "string" }
+    - { question: "libnss-ldap/bindpw", value: "{{ ldap_password }}", type: "password" }
+    - { question: "libnss-ldap/rootbinddn", value: "", type: "string" }
+    - { question: "libnss-ldap/nsswitch", value: "passwd group shadow", type: "select" }
+  ignore_errors: true
+
+- name: Ensure ssl dir exist
+  file:
+    path: "{{ cert_path }}"
+    state: directory
+    mode: 750
+
+- name: Upload ssl ca_file
+  copy:
+    src: certs/ca.crt
+    dest: "{{ cert_path }}/"
+
+- name: Custom config file implementation
+  template: 
+    src: clienldap.conf.j2
+    dest: /etc/ldap.conf
+
+- name: Custom ldap.conf main implementation
+  template:
+    src: ldap.conf.j2
+    dest: /etc/ldap/ldap.conf
+
+- name: Configure NSS to use LDAP for authentication
+  template:
+    src: nsswitch.conf.j2
+    dest: /etc/nsswitch.conf
+
+- name: Configure common-password
+  template:
+    src: pam.d/common-password.j2
+    dest: /etc/pam.d/common-password
+
+- name: Configure common-session
+  template:
+    src: pam.d/common-session.j2
+    dest: /etc/pam.d/common-session
+  notify:
+   - "restart_nscd"
+
+- name: Test LDAP configuration
+  shell: ldapsearch -x -H "{{ ldap_server }}" -b "{{ ldap_basedc }}" -D "{{ ldap_user }}" -w "{{ ldap_password }}"
+  register: ldapsearch_result
+  ignore_errors: true
+
+- name: Display LDAP search result
+  debug:
+    var: ldapsearch_result.stdout
+
+- name: Fail if LDAP search fails
+  fail:
+    msg: "LDAP client configuration failed. Check your settings."
+  when: ldapsearch_result.rc != 0
+  
+
+

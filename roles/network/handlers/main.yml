@@ -1,0 +1,4 @@
+---
+# handlers file for network
+- name: "netplan_apply"
+  shell: netplan apply

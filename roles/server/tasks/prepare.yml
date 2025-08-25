@@ -1,0 +1,47 @@
+---
+- name: Install required package  
+  apt:
+    name: 
+      - "curl"
+      - "git"
+      - "docker.io"
+      - "docker-compose-v2"
+      - "network-manager"
+    update_cache: true
+  ignore_errors: true
+
+- name: Get the current user
+  ansible.builtin.command: whoami
+  register: current_user
+
+- name: Download Node js archive
+  ansible.builtin.get_url:
+    url: "https://nodejs.org/dist/v22.17.1/{{nodejs_archivename}}.tar.xz"
+    dest: "/tmp/{{nodejs_archivename}}.tar.xz"
+  register: download_fail
+  ignore_errors: true
+  
+- name: Failed to download archive, trying to upload manually
+  ansible.builtin.copy:
+    src: "{{nodejs_archivename}}.tar.xz"
+    dest: "/tmp/{{nodejs_archivename}}.tar.xz"
+  when:
+    download_fail.failed
+
+- name: Extract archive to the correct location
+  unarchive:
+    src: "/tmp/{{nodejs_archivename}}.tar.xz"
+    dest: "/usr/bin"
+    remote_src: yes
+
+- name: Ensure node executable has correct permissions
+  ansible.builtin.file:
+    path: "/usr/bin/{{ nodejs_archivename }}"  # Adjust this path if node is in a different location
+    mode: '0755'
+
+- name: Debug current_user register
+  debug:
+       msg: "The user running the playbook is: {{ ansible_user_id }}"
+
+- name: Set path for subsequent tasks
+  ansible.builtin.shell: echo 'PATH=$PATH:/usr/bin/{{ nodejs_archivename }}/bin' >> ~/.bashrc

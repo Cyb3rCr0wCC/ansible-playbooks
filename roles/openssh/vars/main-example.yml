@@ -1,0 +1,8 @@
+---
+ssh_port: 1111
+
+users_with_keys:
+  - username: user
+    public_key_path: files/user.pub
+  - username: user2
+    public_key_path: files/user1.pub

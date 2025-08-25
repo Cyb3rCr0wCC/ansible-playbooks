@@ -1,0 +1,20 @@
+network:
+  version: 2
+  ethernets:
+{% for item in interfaces %}
+    {{ item.name }}:
+      addresses:
+        - "{{ item.ipaddr }}"
+      routes:
+{% for route in item.routes %}
+        - to: "{{ route.to }}"
+          via: "{{ route.via }}"
+{% endfor %}
+{% if item.nameservers is defined %}
+      nameservers:
+        addresses:
+{% for address in item.nameservers.addresses %}
+          - "{{ address }}"
+{% endfor %}
+{% endif %}
+{% endfor %}

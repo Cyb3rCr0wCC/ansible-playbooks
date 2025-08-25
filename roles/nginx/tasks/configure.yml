@@ -1,0 +1,47 @@
+---
+- name: Backup current nginx.conf
+  ansible.builtin.copy:
+    src: /etc/nginx/nginx.conf
+    dest: /etc/nginx/nginx.conf.bak
+    remote_src: yes
+
+- name: Copy Nginx.conf to remote location
+  ansible.builtin.copy:
+    src: files/nginx.conf
+    dest: /etc/nginx/nginx.conf
+
+- name: Check Nginx configuration syntax
+  ansible.builtin.command: nginx -t
+  register: nginx_check_result
+  changed_when: false # This command doesn't change anything
+  failed_when: >
+    nginx_check_result.rc != 0 and 'syntax is ok' not in nginx_check_result.stderr
+
+- name: Display Nginx config check output
+  ansible.builtin.debug:
+    msg: "{{ nginx_check_result.stderr }}"
+  # Always show the output, especially useful for debugging when it fails
+
+- name: Action if Nginx config is CORRECT (syntax is ok)
+  ansible.builtin.debug:
+    msg: "Nginx configuration is correct. Proceeding with reload/restart."
+  when: nginx_check_result.rc == 0 or 'syntax is ok' in nginx_check_result.stderr
+      # This task runs if the check passed
+  notify:
+    - restart_nginx
+  # Only attempt reload if the configuration was validated successfully
+
+- name: Action if Nginx config is INCORRECT (syntax errors found)
+  ansible.builtin.debug:
+    msg: "Nginx configuration has errors! Please review: {{ nginx_check_result.stderr }}"
+  when: nginx_check_result.rc != 0 and 'syntax is ok' not in nginx_check_result.stderr
+  # This task runs if the check failed
+
+- name: Restoring nginx config 
+  ansible.builtin.copy:
+    src: /etc/nginx/nginx.conf,bak
+    dest: /etc/nginx/nginx.conf
+    remote_src: yes
+  notify:
+  - restart_nginx
+

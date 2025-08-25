@@ -1,0 +1,9 @@
+---
+# handlers file for openldap
+- name: restart_slapd
+  command: systemctl restart slapd  
+
+- name: restart_nscd
+  service:
+    name: nscd
+    state: restarted
