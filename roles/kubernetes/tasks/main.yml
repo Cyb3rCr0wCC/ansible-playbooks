@@ -1,0 +1,7 @@
+---
+# tasks file for kubernetes
+- import_tasks: dependency.yml
+  tags: kube_dependencies
+
+- import_tasks: master.yml
+  tags: kube_master

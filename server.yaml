@@ -22,10 +22,16 @@
       tags:
         - promtail
         - configure
-    - name:
-      include_role:
+    
+    - include_role:
         name: network
       tags:
         - "netplan_conf"
+
+    - include_role:
+        name: kubernetes
+      tags:
+        - "kube_dependencies"
+        - "kube_master"
 
       # Other roles
