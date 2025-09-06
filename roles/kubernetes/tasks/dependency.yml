@@ -2,9 +2,6 @@
       apt:
         update_cache: yes
 
-    - name: Reboot
-      reboot:
-
     - name: Disable SWAP
       shell: |
         swapoff -a

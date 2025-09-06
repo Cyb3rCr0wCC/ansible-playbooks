@@ -5,7 +5,7 @@
         owner: root
         group: root
         mode: '0755'
-
+    
     - name: Create an Empty file for Kubeadm configuring
       copy:
         content: ""
@@ -46,32 +46,29 @@
         - /var/lib/etcd
         - /var/lib/cni
         - /etc/cni/net.d
-    
-    - name: Initialize the cluster
-      shell: kubeadm init --config /etc/kubernetes/kubeadm-config.yaml >> cluster_initialized.log
-      args:
-        chdir: /home/ubuntu/.kube
-        creates: cluster_initialized.log
 
     - name: Create .kube directory
-      become: yes
       become_user: ubuntu
       file:
-        path: /home/ubuntu/.kube
+        path: "/home/{{ ansible_user }}/.kube"
         state: directory
         mode: 0755
 
+    - name: Initialize the cluster
+      shell: "kubeadm init --config /etc/kubernetes/kubeadm-config.yaml"
+      args:
+        chdir: "/home/{{ ansible_user }}/.kube"
+        
     - name: Copy admin.conf to User's kube config
       copy:
         src: /etc/kubernetes/admin.conf
-        dest: /home/ubuntu/.kube/config
+        dest: "/home/{{ ansible_user }}/.kube/config"
         remote_src: yes
         owner: ubuntu
 
     - name: Install Pod Network
-      become: yes
       become_user: ubuntu
       shell: kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml >> pod_network_setup.log
       args:
-        chdir: /home/ubuntu
+        chdir: "/home/{{ ansible_user }}"
         creates: pod_network_setup.log

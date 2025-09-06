@@ -5,3 +5,6 @@
 
 - import_tasks: master.yml
   tags: kube_master
+
+- import_tasks: worker.yml
+  tags: kube_worker
