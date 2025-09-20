@@ -1,6 +1,6 @@
 ---
 - name: Service Management  # This starts the first (and only) play in this playbook
-  hosts: worker      # Indented 2 spaces from "name"
+  hosts: worker       # Indented 2 spaces from "name"
   become: yes             # Indented 2 spaces from "name"
   tasks:                  # Indented 2 spaces from "name"
     - name: Include server role  # Indented 4 spaces from "name" (of the play)
@@ -35,4 +35,3 @@
         - "kube_master"
         - "kube_worker"
 
-      # Other roles

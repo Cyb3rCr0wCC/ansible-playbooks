@@ -8,3 +8,6 @@
 
 - import_tasks: worker.yml
   tags: kube_worker
+
+- import_tasks: network.yml
+  tags: init_networking

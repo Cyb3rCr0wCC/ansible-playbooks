@@ -5,4 +5,4 @@
 production.yml
 *.cfg
 **/vars/main.yml
-inventories/*
+inventories/production/*
